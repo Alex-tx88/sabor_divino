@@ -64,7 +64,7 @@ class AboutScreen extends StatelessWidget {
               },
               child: const Text('Voltar ao Início'),
             ),
-            // ===================================
+            
           ],
         ),
       ),

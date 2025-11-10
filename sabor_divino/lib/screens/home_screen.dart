@@ -7,6 +7,9 @@ import 'package:sabor_divino/screens/login_screen.dart';
 import 'package:sabor_divino/screens/menu_screen.dart';
 import 'package:sabor_divino/widgets/app_drawer.dart';
 
+// 1. IMPORTE O AUTH_PROVIDER PARA SABER O ESTADO DE LOGIN
+import 'package:sabor_divino/providers/auth_provider.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -29,17 +32,42 @@ class HomeScreen extends StatelessWidget {
         ),
         centerTitle: true,
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+          // 2. SUBSTITUA O TEXTBUTTON ESTÁTICO POR UM CONSUMER
+          Consumer<AuthProvider>(
+            builder: (context, auth, child) {
+              // 3. VERIFIQUE SE ESTÁ AUTENTICADO
+              if (auth.isAuthenticated) {
+                // 4. SE ESTIVER, MOSTRE O BOTÃO "SAIR"
+                return TextButton(
+                  onPressed: () {
+                    // Chame a função de logout do provider
+                    context.read<AuthProvider>().logout();
+                  },
+                  child: Text(
+                    'Sair', // Texto muda para Sair
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                );
+              } else {
+                // 5. SE NÃO ESTIVER, MOSTRE O BOTÃO "ENTRAR"
+                return TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()));
+                  },
+                  child: Text(
+                    'Entrar',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                );
+              }
             },
-            child: Text(
-              'Entrar',
-              style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold),
-            ),
           ),
           Consumer<CartProvider>(
             builder: (context, cart, child) => Stack(
@@ -65,11 +93,11 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       constraints:
-                      const BoxConstraints(minWidth: 18, minHeight: 18),
+                          const BoxConstraints(minWidth: 18, minHeight: 18),
                       child: Text(
                         cart.itemCount.toString(),
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 12),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 12),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -91,7 +119,10 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Text('Bem-vindo à Sabor Divino',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 36)),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayLarge
+                          ?.copyWith(fontSize: 36)),
                   const SizedBox(height: 8),
                   Text(
                     'Os melhores lanches, bebidas e sobremesas da cidade. Faça seu pedido agora!',
@@ -117,21 +148,24 @@ class HomeScreen extends StatelessWidget {
                     context,
                     icon: Icons.fastfood,
                     title: 'Lanches',
-                    subtitle: 'Hambúrgueres artesanais feitos com ingredientes frescos e de qualidade.',
+                    subtitle:
+                        'Hambúrgueres artesanais feitos com ingredientes frescos e de qualidade.',
                     onTap: () => navigateToMenuWithCategory('Lanches'),
                   ),
                   _buildCategoryCard(
                     context,
                     icon: Icons.local_drink,
                     title: 'Bebidas',
-                    subtitle: 'Sucos naturais, refrigerantes e milkshakes para acompanhar seu lanche.',
+                    subtitle:
+                        'Sucos naturais, refrigerantes e milkshakes para acompanhar seu lanche.',
                     onTap: () => navigateToMenuWithCategory('Bebidas'),
                   ),
                   _buildCategoryCard(
                     context,
                     icon: Icons.icecream,
                     title: 'Sobremesas',
-                    subtitle: 'Doces irresistíveis para finalizar sua refeição com chave de ouro.',
+                    subtitle:
+                        'Doces irresistíveis para finalizar sua refeição com chave de ouro.',
                     onTap: () => navigateToMenuWithCategory('Sobremesas'),
                   ),
                   // Horário de Funcionamento
@@ -140,7 +174,8 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(24.0),
                       child: Column(
                         children: [
-                          Text('Horário de Funcionamento', style: Theme.of(context).textTheme.headlineSmall),
+                          Text('Horário de Funcionamento',
+                              style: Theme.of(context).textTheme.headlineSmall),
                           const SizedBox(height: 16),
                           const Text('Segunda a Sexta: 18:00 - 23:00'),
                           const SizedBox(height: 8),
@@ -159,12 +194,12 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildCategoryCard(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required String subtitle,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24.0),

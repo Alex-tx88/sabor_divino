@@ -70,7 +70,7 @@ class ProductDetailScreen extends StatelessWidget {
           label: const Text('Adicionar ao Carrinho'),
           onPressed: () {
             final cart = context.read<CartProvider>();
-            cart.add(product);
+            cart.addItem(product);
 
             // Mostra uma notificação de confirmação
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -81,7 +81,7 @@ class ProductDetailScreen extends StatelessWidget {
                 action: SnackBarAction(
                   label: 'DESFAZER',
                   onPressed: () {
-                    cart.remove(product);
+                    cart.removeItem(product.id);
                   },
                 ),
               ),
